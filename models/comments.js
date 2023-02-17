@@ -9,6 +9,6 @@ const schema = new Schema({
  date: { type: Date }
 });
 
-const Comments = new model('comments', schema, 'comments');
+const Comments = new model('comments', schema);
 
 module.exports = { Comments };
