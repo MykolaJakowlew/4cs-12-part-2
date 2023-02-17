@@ -1,22 +1,17 @@
 {
-  "name": "4cs-13-part-2",
+  "name": "lecture_2",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MykolaJakowlew/4cs-13-part-2.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/MykolaJakowlew/4cs-13-part-2/issues"
-  },
-  "homepage": "https://github.com/MykolaJakowlew/4cs-13-part-2#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "body-parser": "^1.20.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1"
   }
 }

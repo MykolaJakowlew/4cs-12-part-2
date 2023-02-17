@@ -1,29 +1,63 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+require('dotenv').config();
+const { Comments } = require('./models/comments');
+
+// process.env
+console.log(`MONGO_DB_URI:${process.env.MONGO_DB_URI}`);
+// console.log('MONGO_DB_URI:', process.env.MONGO_DB_URI);
+
+const Mongo = require('./setup/mongoose');
 
 const app = express();
+app.use(bodyParser.json());
 
-const data = [
- { id: 1, name: 'name-1' },
- { id: 2, name: 'name-2' },
- { id: 3, name: 'name-3' },
- { id: 4, name: 'name-4' },
-];
+const setup = async () => {
+ await Mongo.setupDb(process.env.MONGO_DB_URI);
 
-app.get("/items", (req, res) => {
+ app.post("/comments", async (req, res) => {
+  const { name, email, text } = req.body;
 
- // ids = "" -> default value
- const { ids = "" } = req.query;
+  const doc = new Comments({
+   name, email, text, date: new Date()
+  });
 
- const splitedIds = ids.split(','); // "2,3,4" => ["2","3","4"]
- const paresdIds = splitedIds.map(e => parseInt(e, 10)); // ["2","3","4"] => [2,3,4]
+  const elem = await doc.save();
 
- const result = data.filter(e => paresdIds.includes(e.id));
+  return res.status(200).send(elem);
+ });
 
- return res.status(200).send(result);
-});
+ app.get("/comments", async (req, res) => {
+  /**
+   * All values are string
+   */
+  const { email, createdAt } = req.query;
 
-app.listen(8080, () => {
- console.log("Server was started on 8080");
-});
+  const queryDb = {};
 
-console.log("Server start");
+  if (email) {
+   queryDb.email = email;
+  }
+
+  if (createdAt) {
+   /**
+    * Повернути записи в яких поле date має значення більше за createdAt
+    * $gt -- строго бліше
+    * $gte -- більше рівне
+    * $lte -- менше рівне
+    * $lt -- строго менше
+    */
+   queryDb.date = { $gt: new Date(createdAt) };
+  }
+
+  const docs = await Comments.find(queryDb);
+
+  return res.status(200).send(docs);
+ });
+
+ app.listen(process.env.PORT, () => {
+  console.log(`Server was started on ${process.env.PORT}`);
+ });
+};
+
+setup();
