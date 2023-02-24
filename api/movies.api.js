@@ -1,11 +1,27 @@
 const { Router } = require('express');
 const { Movies } = require('../models/movies');
+const { UserAccount } = require('../models/userAccount');
 
 const router = Router();
 
 /**
  * GET http://localhost:8080/movies?....
  */
+
+router.use("/movies*", async (req, res, next) => {
+ const { authorization } = req.headers;
+ if (!authorization) {
+  return res.status(401).send({ message: `Authorization header is required` });
+ }
+
+ const user = await UserAccount.findOne({ tokens: authorization });
+ if (!user) {
+  return res.status(401).send({ message: `User was not found by token` });
+ }
+
+ console.log(`[auth] user login:${user.login}`);
+ return next();
+});
 
 router.get("/movies", async (req, res) => {
  const { skip = 0, limit = 10, year, period_year, imdb_rating } = req.query;
