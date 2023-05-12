@@ -6,9 +6,7 @@ module.exports.wrapperApi = (handler) => {
       console.error('[wrapperApi]', err.toString(), err);
       return res
         .status(500)
-        .send({
-          message: `Internal server error:${err.toString()}`
-        });
+        .send({ message: `Internal server error:${err.toString()}` });
     }
   };
 };

@@ -4,28 +4,27 @@ const DishesMock = {};
 
 jest.mock('../../../models', () => {
  DishesMock.save = jest.fn();
- DishesMock.new = jest.fn();
  return {
-  Dishes: DishesMock.new
+  Dishes: jest.fn()
    .mockImplementation(() => {
-    return {
-     save: DishesMock.save
-    };
-   })
+    return { save: DishesMock.save };
+   }),
  };
 });
 
 describe("createDish", () => {
- const res = {
-  status: jest.fn().mockImplementation(() => res),
-  send: jest.fn()
- };
- it("successful executed", async () => {
+ it('successful', async () => {
   const req = {
-   body: { price: 45, isAvailable: true }
+   body: { price: 45, isAvailable: false }
   };
 
-  DishesMock.save.mockResolvedValueOnce(req.body);
+  const res = {
+   status: jest.fn().mockImplementation(() => res),
+   send: jest.fn()
+  };
+
+  const mockDoc = { price: 45, isAvailable: false };
+  DishesMock.save.mockReturnValueOnce(mockDoc);
 
   await createDish(req, res);
 
@@ -33,15 +32,20 @@ describe("createDish", () => {
   expect(res.send).toBeCalledWith(req.body);
  });
 
- it('default value for isAvailable must be false', async () => {
-  const req = {
-   body: { price: 45 }
+ it("default value isAvailable is true", async () => {
+  const req = { body: { price: 45 } };
+  const res = {
+   status: jest.fn().mockImplementation(() => res),
+   send: jest.fn()
   };
+
+  const mockDoc = { price: 45, isAvailable: false };
+  DishesMock.save.mockReturnValueOnce(mockDoc);
 
   await createDish(req, res);
 
-  expect(DishesMock.new).toBeCalledWith({
-   price: 45,
+  expect(res.send).toBeCalledWith({
+   ...req.body,
    isAvailable: true
   });
  });

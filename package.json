@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cd public/ && npm run build",
-    "start:long-polling": "node server/long-polling.js",
-    "start:event-source": "node server/event-source.js",
+    "start": "node src/index.js",
     "test": "jest"
   },
   "author": "",
